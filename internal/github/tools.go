@@ -4,6 +4,11 @@ import "github.com/modelcontextprotocol/go-sdk/mcp"
 
 func Register(s *mcp.Server) {
 	mcp.AddTool(s, &mcp.Tool{
+		Name:        "list_pull_requests",
+		Description: "List pull requests in a GitHub repository. Optionally filter by state and paginate.",
+	}, handleListPullRequests)
+
+	mcp.AddTool(s, &mcp.Tool{
 		Name:        "get_pull_request",
 		Description: "Get GitHub pull request metadata: title, description, author, state, source/destination branches, reviewers.",
 	}, handleGetPullRequest)

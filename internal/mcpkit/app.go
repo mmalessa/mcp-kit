@@ -27,6 +27,10 @@ func (a App) Run() error {
 			return a.registerInClaude()
 		case "remove-from-claude":
 			return a.unregisterFromClaude()
+		case "add-to-opencode":
+			return a.registerInOpencode()
+		case "remove-from-opencode":
+			return a.unregisterFromOpencode()
 		case "-h", "--help", "help":
 			a.printUsage()
 			return nil
@@ -68,6 +72,8 @@ Commands:
   (none)    Run as MCP server over stdio (default).
   add-to-claude       Register this server in Claude Code for the current project.
   remove-from-claude  Unregister this server from Claude Code.
+  add-to-opencode     Register this server in opencode (writes ./opencode.json).
+  remove-from-opencode Unregister this server from opencode (edits ./opencode.json).
   help      Show this help.
 `, a.Name)
 }

@@ -13,6 +13,7 @@ Each server is a separate binary built from a single shared Go module.
   - `get_confluence_page` — fetch a page by ID (`{"page_id": "12345"}`)
 
 - **mcp-bitbucket** — read-only access to Bitbucket Cloud (pull requests for code review)
+  - `list_pull_requests` — list PRs in a repo (`{"repo": "my-repo", "state": "OPEN"}`)
   - `get_pull_request` — PR metadata (`{"repo": "my-repo", "id": 123}`)
   - `get_pull_request_diff` — unified diff
   - `get_pull_request_diffstat` — per-file change summary
@@ -24,6 +25,7 @@ Each server is a separate binary built from a single shared Go module.
   can cover multiple repositories in the same workspace.
 
 - **mcp-github** — read-only access to GitHub (pull requests for code review)
+  - `list_pull_requests` — list PRs in a repo (`{"repo": "my-repo", "state": "open"}`)
   - `get_pull_request` — PR metadata (`{"repo": "my-repo", "id": 123}`)
   - `get_pull_request_diff` — unified diff
   - `get_pull_request_diffstat` — per-file change summary (lines added/removed per file)
@@ -136,14 +138,14 @@ make tidy                      # go mod tidy
 
 Make sure `~/bin` is on your `PATH`.
 
-## Registration in Claude Code (binary self-install)
+## Registration (binary self-install)
 
-Each binary supports `add-to-claude` and `remove-from-claude` subcommands — it registers / unregisters
-itself in Claude Code for the current project (scope local, CWD). The name in Claude
-Code is the binary name without the `mcp-` prefix (`mcp-atlassian` → `atlassian`).
+Each binary can register itself in Claude Code or opencode for the current project.
+The server name is the binary name without the `mcp-` prefix (`mcp-atlassian` → `atlassian`).
+
+### Claude Code
 
 ```sh
-# in the project directory where you want the server:
 cd /home/projects/some-project
 mcp-atlassian add-to-claude       # register (uses its own path from os.Executable())
 mcp-atlassian remove-from-claude  # unregister
@@ -153,3 +155,15 @@ mcp-atlassian help                # show available commands
 `add-to-claude` is idempotent — if the registration already exists, it is removed first.
 The binary passes its actual path (`os.Executable()` + `EvalSymlinks`) to
 `claude mcp add`, regardless of CWD.
+
+### opencode
+
+```sh
+cd /home/projects/some-project
+mcp-atlassian add-to-opencode     # writes entry to ./opencode.json
+mcp-atlassian remove-from-opencode
+```
+
+`add-to-opencode` writes a `local` server entry directly to `./opencode.json` (project scope).
+If the file does not exist it is created. The command is idempotent — it overwrites any
+existing entry for the same name.

@@ -14,6 +14,29 @@ type PullRequestInput struct {
 	ID   int    `json:"id" jsonschema:"Pull request number (the number in the PR URL)"`
 }
 
+type ListPullRequestsInput struct {
+	Repo    string `json:"repo" jsonschema:"Repository name (slug) within the GitHub owner/organization"`
+	State   string `json:"state,omitempty" jsonschema:"Filter by state: 'open', 'closed', 'all'. Default is 'open'."`
+	PerPage int    `json:"per_page,omitempty" jsonschema:"Results per page (max 100). Default is 30."`
+	Page    int    `json:"page,omitempty" jsonschema:"Page number of results. Default is 1."`
+}
+
+func handleListPullRequests(_ context.Context, _ *mcp.CallToolRequest, in ListPullRequestsInput) (*mcp.CallToolResult, any, error) {
+	url := fmt.Sprintf("%s/repos/%s/%s/pulls?state=%s&per_page=%d&page=%d",
+		apiBase(),
+		os.Getenv("GITHUB_OWNER"),
+		in.Repo,
+		defaultIfEmpty(in.State, "open"),
+		maxInt(in.PerPage, 30),
+		maxInt(in.Page, 1),
+	)
+	body, err := get(url, "")
+	if err != nil {
+		return nil, nil, err
+	}
+	return mcpkit.TextResult(string(body)), nil, nil
+}
+
 func handleGetPullRequest(_ context.Context, _ *mcp.CallToolRequest, in PullRequestInput) (*mcp.CallToolResult, any, error) {
 	body, err := get(prURL(in.Repo, in.ID, ""), "")
 	if err != nil {
@@ -71,4 +94,21 @@ func issueURL(repo string, id int, subpath string) string {
 		url += "/" + subpath
 	}
 	return url
+}
+
+func defaultIfEmpty(val, defaultVal string) string {
+	if val == "" {
+		return defaultVal
+	}
+	return val
+}
+
+func maxInt(val, defaultVal int) int {
+	if val <= 0 {
+		return defaultVal
+	}
+	if val > 100 {
+		return 100
+	}
+	return val
 }
