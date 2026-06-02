@@ -23,9 +23,9 @@ func (a App) Run() error {
 
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
-		case "add":
+		case "add-to-claude":
 			return a.registerInClaude()
-		case "remove":
+		case "remove-from-claude":
 			return a.unregisterFromClaude()
 		case "-h", "--help", "help":
 			a.printUsage()
@@ -66,8 +66,8 @@ func (a App) printUsage() {
 
 Commands:
   (none)    Run as MCP server over stdio (default).
-  add       Register this server in Claude Code for the current project.
-  remove    Unregister this server from Claude Code.
+  add-to-claude       Register this server in Claude Code for the current project.
+  remove-from-claude  Unregister this server from Claude Code.
   help      Show this help.
 `, a.Name)
 }

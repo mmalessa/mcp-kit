@@ -43,7 +43,7 @@ mcp-kit/
 │       ├── main.go              # thin entrypoint
 │       └── .env.dist            # (optional) per-binary config template
 ├── internal/
-│   ├── mcpkit/                  # shared bootstrap: env loading, MCP server, add/remove
+│   ├── mcpkit/                  # shared bootstrap: env loading, MCP server, add-to-claude/remove-from-claude
 │   └── <name>/                  # handlers and logic for a given server
 ├── bin/                         # built binaries (gitignored)
 └── Makefile
@@ -138,18 +138,18 @@ Make sure `~/bin` is on your `PATH`.
 
 ## Registration in Claude Code (binary self-install)
 
-Each binary supports `add` and `remove` subcommands — it registers / unregisters
+Each binary supports `add-to-claude` and `remove-from-claude` subcommands — it registers / unregisters
 itself in Claude Code for the current project (scope local, CWD). The name in Claude
 Code is the binary name without the `mcp-` prefix (`mcp-atlassian` → `atlassian`).
 
 ```sh
 # in the project directory where you want the server:
 cd /home/projects/some-project
-mcp-atlassian add       # register (uses its own path from os.Executable())
-mcp-atlassian remove    # unregister
-mcp-atlassian help      # show available commands
+mcp-atlassian add-to-claude       # register (uses its own path from os.Executable())
+mcp-atlassian remove-from-claude  # unregister
+mcp-atlassian help                # show available commands
 ```
 
-`add` is idempotent — if the registration already exists, it is removed first.
+`add-to-claude` is idempotent — if the registration already exists, it is removed first.
 The binary passes its actual path (`os.Executable()` + `EvalSymlinks`) to
 `claude mcp add`, regardless of CWD.
