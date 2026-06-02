@@ -23,6 +23,17 @@ Each server is a separate binary built from a single shared Go module.
   comes from `BITBUCKET_WORKSPACE`; the repo is per-call so one server instance
   can cover multiple repositories in the same workspace.
 
+- **mcp-github** — read-only access to GitHub (pull requests for code review)
+  - `get_pull_request` — PR metadata (`{"repo": "my-repo", "id": 123}`)
+  - `get_pull_request_diff` — unified diff
+  - `get_pull_request_diffstat` — per-file change summary (lines added/removed per file)
+  - `get_pull_request_comments` — review comments + general PR discussion comments
+  - `get_pull_request_commits` — list of commits
+
+  All tools take `repo` (repository name) and `id` (PR number). The owner / organization
+  comes from `GITHUB_OWNER`; the repo is per-call so one server instance can cover
+  multiple repositories under the same owner.
+
 ## Project structure
 
 ```
@@ -77,6 +88,21 @@ How to create one:
 
 `BITBUCKET_EMAIL` is the Atlassian account email (the address you use to sign
 in at id.atlassian.com), not the Bitbucket username.
+
+**mcp-github** (`~/.config/mcp-kit/mcp-github.env`):
+
+```
+GITHUB_TOKEN=your_github_token
+GITHUB_OWNER=your_org_or_username
+```
+
+Token: GitHub Settings → Developer settings → Personal access tokens.
+Fine-grained tokens are recommended; grant at least **Pull requests** (read-only)
+and **Issues** (read-only) under the relevant repositories. Classic tokens need
+the `repo` scope.
+
+For GitHub Enterprise Server set `GITHUB_API_URL` to your internal API base
+(e.g. `https://api.github.my-company.com`).
 
 ### `.env` loading order
 
