@@ -8,6 +8,8 @@ Each server is a separate binary built from a single shared Go module.
 - **mcp-atlassian** — read-only access to Jira and Confluence
   - `get_jira_task` — fetch an issue by key (`{"issue_key": "PROJ-123"}`)
   - `search_jira` — search issues by JQL (`{"jql": "project = PROJ"}`)
+  - `get_jira_attachment` — download an attachment by ID (`{"attachment_id": "10001"}`);
+    images are returned as viewable image content, text files as text (max 5 MB)
   - `get_confluence_page` — fetch a page by ID (`{"page_id": "12345"}`)
 
 - **mcp-bitbucket** — read-only access to Bitbucket Cloud (pull requests for code review)
